@@ -391,50 +391,52 @@
         function getFirstDayOfMonth(month, year) {
             return new Date(year, month, 1).getDay();
         }
-
         function renderCalendar() {
-            calendarEl.innerHTML = "";
-            const daysInMonth = getDaysInMonth(currentMonth, currentYear);
-            const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
-            const today = new Date();
+    calendarEl.innerHTML = "";
+    const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+    const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+    const today = new Date();
+    const todayDate = today.getDate();
+    const todayMonth = today.getMonth();
+    const todayYear = today.getFullYear();
 
-            currentMonthEl.textContent = `Tháng ${currentMonth + 1} ${currentYear}`;
+    currentMonthEl.textContent = `Tháng ${currentMonth + 1} ${currentYear}`;
 
-            // Thêm ô trống trước ngày 1 để căn chỉnh
-            for (let i = 0; i < firstDay; i++) {
-                const emptyCell = document.createElement("div");
-                emptyCell.classList.add("day");
-                emptyCell.style.visibility = "hidden"; // Ẩn ô trống
-                calendarEl.appendChild(emptyCell);
-            }
+    // Thêm ô trống trước ngày 1 để căn chỉnh
+    for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.classList.add("day");
+        emptyCell.style.visibility = "hidden"; // Ẩn ô trống
+        calendarEl.appendChild(emptyCell);
+    }
 
-            for (let i = 1; i <= daysInMonth; i++) {
-                const dayEl = document.createElement("div");
-                dayEl.classList.add("day");
-                dayEl.textContent = i;
+    for (let i = 1; i <= daysInMonth; i++) {
+        const dayEl = document.createElement("div");
+        dayEl.classList.add("day");
+        dayEl.textContent = i;
 
-                // Kiểm tra nếu ngày hiện tại khớp với ngày trong lịch
-                if (
-                    i === today.getDate() &&
-                    currentMonth === today.getMonth() &&
-                    currentYear === today.getFullYear()
-                ) {
-                    dayEl.classList.add("today");
-                }
-
-                dayEl.addEventListener("click", function () {
-                    document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
-
-                    if (dayEl.classList.contains("today")) {
-
-                    }
-                    this.classList.add("selected");
-                    selectedDate = i;
-                });
-
-                calendarEl.appendChild(dayEl);
-            }
+        // Kiểm tra nếu ngày là hôm nay
+        if (i === todayDate && currentMonth === todayMonth && currentYear === todayYear) {
+            dayEl.classList.add("today");
         }
+
+        // Ngăn không cho chọn ngày đã qua
+        if ((currentYear < todayYear) || 
+            (currentYear === todayYear && currentMonth < todayMonth) || 
+            (currentYear === todayYear && currentMonth === todayMonth && i < todayDate)) {
+            dayEl.style.opacity = "0.3"; // Mờ đi để hiển thị không thể chọn
+            dayEl.style.pointerEvents = "none"; // Vô hiệu hóa click
+        } else {
+            dayEl.addEventListener("click", function () {
+                document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+                this.classList.add("selected");
+                selectedDate = i;
+            });
+        }
+
+        calendarEl.appendChild(dayEl);
+    }
+}
 
         renderTimeSlots();
 
