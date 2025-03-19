@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            background-color: #1e1e1e;
+            /* padding: 20px; */
+            border-radius: 10px;
+        }
+
+        .left-panel {
+            width: 50%;
+            padding: 20px;
+        }
+
+        #tab1-content .left-panel {
+            width: 30%;
+            padding: 20px;
+        }
+
+        #tab2-content .left-panel {
+            width: 50%;
+            padding: 20px;
+        }
+
+        .mid-panel {
+            width: 50%;
+            padding: 20px;
+            border-left: 1px #aaa solid;
+        }
+
+        .right-panel {
+            width: 20%;
+            padding: 20px;
+            border-left: 1px #aaa solid;
+        }
+
+        .form {
+            width: 50%;
+            padding: 20px;
+            border-left: 1px #aaa solid;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .calendar-header button {
+            background-color: #292929;
+            color: #fff;
+            border: none;
+            height: 50px;
+            width: 50px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .calendar-header button:hover {
+            background-color: #444;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day {
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            cursor: pointer;
+            /* background-color: #292929; */
+        }
+
+        .day:hover {
+            background-color: #444;
+        }
+
+        .selected {
+            background-color: #fff !important;
+            color: #000 !important;
+        }
+
+        .weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            margin-bottom: 5px;
+            margin-top: 50px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .time-slots {
+            width: 100%;
+            padding-top: 10px;
+            margin: auto;
+            /* max-height: 300px; */
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        .time-slot {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+            border: #aaa 1px solid;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .time-slot:hover {
+            background-color: #444;
+        }
+
+        .selected-time {
+            background-color: #fff;
+            color: #000;
+        }
+
+        .today {
+            background-color: #444;
+            ;
+            /* Màu cam nổi bật */
+            color: #fff;
+            font-weight: bold;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #aaa;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .tab.active {
+            background: #444;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            opacity: 0;
+            transform: translateX(50px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: flex;
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* .today::after {
+            position: absolute;
+            bottom:10px;
+            left: 0;
+            right: 0;
+            content: "";
+            height: 10px;
+            width: 10px;
+            border-radius: 100%;
+            background: red;
+        } */
+        label {
+            font-size: 14px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #444;
+            background: #333;
+            color: white;
+            border-radius: 4px;
+        }
+
+
+
+        button {
+            width: 100px;
+            padding: 10px;
+            background: white;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background: #005f7f;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+
+        <div class="tab-content active" id="tab1-content">
+            <!-- Bên trái -->
+            <div class="left-panel">
+                <div class="title">Demo Call | 8-Figure License</div>
+                <div class="description">
+                    In this one-on-one call with our team, you'll discover if the 8-Figure License is the best fit for
+                    your
+                    unique situation.
+                </div>
+                <div><strong>⏳ 45 phút</strong></div>
+                <div><strong>🌍 Asia/VietNam</strong></div>
+            </div>
+
+            <!-- Bên phải -->
+            <div class="mid-panel">
+                <div class="calendar-header">
+                    <button id="prevMonth">⬅</button>
+                    <strong id="currentMonth"></strong>
+                    <button id="nextMonth">➡</button>
+                </div>
+                <div class="weekdays">
+                    <div>CN</div>
+                    <div>T2</div>
+                    <div>T3</div>
+                    <div>T4</div>
+                    <div>T5</div>
+                    <div>T6</div>
+                    <div>T7</div>
+                </div>
+                <div class="calendar" id="calendar"></div>
+            </div>
+            <div class="right-panel">
+                <div class="time-slots" id="timeSlots"></div>
+            </div>
+        </div>
+
+        <div class="tab-content " id="tab2-content">
+            <div class="left-panel">
+                <div class="title">Demo Call | 8-Figure License</div>
+                <div class="description">
+                    In this one-on-one call with our team, you'll discover if the 8-Figure License is the best fit for
+                    your
+                    unique situation.
+                </div>
+                <div id="renderTime"></div>
+                <div><strong>⏳ 45 phút</strong></div>
+                <div><strong>🌍 Asia/VietNam</strong></div>
+            </div>
+            <div class="form">
+                <form id="businessForm">
+                    <label for="name">Tên của bạn *</label>
+                    <input type="text" id="name" required>
+
+                    <label for="email">Địa chỉ email *</label>
+                    <input type="email" id="email" required>
+
+                    <label for="phone">Số điện thoại *</label>
+                    <input type="tel" id="phone" placeholder="+65" required>
+
+                    <label for="instagram">Instagram (nếu có)</label>
+                    <input type="text" id="instagram" placeholder="@yourhandle">
+
+                    <label for="location">Where are you based? *</label>
+                    <input type="text" id="location" placeholder="Maximum 3 Cities" required>
+
+                    <label for="profit">What is your current monthly profit? *</label>
+                    <select id="profit" required>
+                        <option value="">Chọn mức thu nhập</option>
+                        <option value="$0 - $10,000">$0 - $10,000</option>
+                        <option value="$10,000 - $50,000">$10,000 - $50,000</option>
+                        <option value="$50,000 - $100,000">$50,000 - $100,000</option>
+                        <option value="$100,000+">$100,000+</option>
+                    </select>
+
+                    <label for="interest">What made you interested in booking this call? *</label>
+                    <textarea id="interest" required></textarea>
+
+                    <label for="businessStatus">What is your current business situation? *</label>
+                    <textarea id="businessStatus" required></textarea>
+
+                    <label for="goal">What’s your ultimate goal with your business? *</label>
+                    <textarea id="goal" required></textarea>
+
+                    <label for="challenge">What’s the biggest challenge stopping you? *</label>
+                    <textarea id="challenge" required></textarea>
+
+                    <div class="btn">
+                        <div id="prevTab">Trở lại</div>
+                        <button type="submit">Xác nhận</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const calendarEl = document.getElementById("calendar");
+        const timeSlotsEl = document.getElementById("timeSlots");
+        const currentMonthEl = document.getElementById("currentMonth");
+        const prevMonthBtn = document.getElementById("prevMonth");
+        const nextMonthBtn = document.getElementById("nextMonth");
+        const renderTime = document.getElementById("renderTime");
+
+        const tab1Content = document.getElementById("tab1-content");
+        const tab2Content = document.getElementById("tab2-content");
+
+        const prevTabButton = document.getElementById("prevTab");
+
+        let selectedTime = null;
+        let timeFinal = null;
+
+        let dateFinal = null;
+
+        let currentMonth = new Date().getMonth(); // Tháng 3 (JS đếm từ 0)
+        let currentYear = 2025;
+
+        let currentDay = new Date().getDate()
+
+        let selectedDate = currentDay;
+
+        function getDaysInMonth(month, year) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function getFirstDayOfMonth(month, year) {
+            return new Date(year, month, 1).getDay();
+        }
+
+        function renderCalendar() {
+            calendarEl.innerHTML = "";
+            const daysInMonth = getDaysInMonth(currentMonth, currentYear);
+            const firstDay = getFirstDayOfMonth(currentMonth, currentYear);
+            const today = new Date();
+
+            currentMonthEl.textContent = `Tháng ${currentMonth + 1} ${currentYear}`;
+
+            // Thêm ô trống trước ngày 1 để căn chỉnh
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement("div");
+                emptyCell.classList.add("day");
+                emptyCell.style.visibility = "hidden"; // Ẩn ô trống
+                calendarEl.appendChild(emptyCell);
+            }
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayEl = document.createElement("div");
+                dayEl.classList.add("day");
+                dayEl.textContent = i;
+
+                // Kiểm tra nếu ngày hiện tại khớp với ngày trong lịch
+                if (
+                    i === today.getDate() &&
+                    currentMonth === today.getMonth() &&
+                    currentYear === today.getFullYear()
+                ) {
+                    dayEl.classList.add("today");
+                }
+
+                dayEl.addEventListener("click", function () {
+                    document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+
+                    if (dayEl.classList.contains("today")) {
+
+                    }
+                    this.classList.add("selected");
+                    selectedDate = i;
+                });
+
+                calendarEl.appendChild(dayEl);
+            }
+        }
+
+        renderTimeSlots();
+
+        function renderTimeSlots() {
+            timeSlotsEl.innerHTML = "";
+            const times = ["12:00am", "1:00am", "2:00am", "3:00am", "4:00am", "4:00pm", "5:00pm", "6:00pm", "7:00pm", "9:00pm"];
+
+            times.forEach(time => {
+                const timeEl = document.createElement("div");
+                timeEl.classList.add("time-slot");
+                timeEl.textContent = time;
+                timeEl.addEventListener("click", function () {
+                    document.querySelectorAll(".time-slot").forEach(d => d.classList.remove("selected-time"));
+                    this.classList.add("selected-time");
+                    selectedDate = i;
+                    // renderTimeSlots();
+                });
+                timeSlotsEl.appendChild(timeEl);
+            });
+        }
+
+        prevMonthBtn.addEventListener("click", function () {
+            if (currentMonth === 0) {
+                currentMonth = 11;
+                currentYear--;
+            } else {
+                currentMonth--;
+            }
+            renderCalendar();
+        });
+
+        nextMonthBtn.addEventListener("click", function () {
+            if (currentMonth === 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else {
+                currentMonth++;
+            }
+            renderCalendar();
+        });
+
+
+        renderCalendar();
+
+
+        // Cập nhật sự kiện chọn ngày
+        document.querySelectorAll(".day").forEach(dayEl => {
+            dayEl.addEventListener("click", function () {
+                document.querySelectorAll(".day").forEach(d => d.classList.remove("selected"));
+                this.classList.add("selected");
+                selectedDate = this.textContent;
+                // if (selectedDate && selectedTime) {
+                //     timeFinal = `Thời gian: ${selectedTime}`;
+                //     dateFinal =  `Ngày ${selectedDate}, tháng ${currentMonth + 1}, ${currentYear}`;
+                //     showTab(2);
+                   
+                // }
+            });
+        });
+
+        // Cập nhật sự kiện chọn giờ
+        document.querySelectorAll(".time-slot").forEach(timeEl => {
+            timeEl.addEventListener("click", function () {
+                document.querySelectorAll(".time-slot").forEach(d => d.classList.remove("selected-time"));
+                this.classList.add("selected-time");
+                selectedTime = this.textContent;
+                if (selectedDate && selectedTime) {
+                    timeFinal = `Thời gian: ${selectedTime}`;
+                    dateFinal =  `Ngày ${selectedDate}, tháng ${currentMonth + 1}, ${currentYear}`;
+                    showTab(2);
+                 
+                }
+            });
+        });
+        function showTab(tabIndex) {
+            if (tabIndex === 1) {
+                setTimeout(() => tab1Content.classList.add("active"), 50);
+                tab2Content.classList.remove("active");
+            } else {
+                setTimeout(() => tab2Content.classList.add("active"), 50);
+                tab1Content.classList.remove("active");
+                renderTime.innerHTML = `<div>  ⏰ ${dateFinal} </div> <div>⏰ ${timeFinal} </div> `
+            }
+        }
+
+        prevTabButton.addEventListener("click", () => showTab(1));
+
+
+    </script>
+
+</body>
+
+</html>
